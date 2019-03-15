@@ -14,7 +14,7 @@
       <div class="row">
         <div class="col" style="margin-right: 50px;">
           <h4>Registration</h4>
-          <form class="form-group" action="url_for(success)" method="post">
+          <form class="form-group" action="{{ url_for('success') }}" method="post">
             <label for="fn" style="margin-top: 10px;">First Name</label>
             <input type='text' class="form-control" name='fn' placeholder="First Name">
             <label for="ln" style="margin-top: 10px;">Last Name</label>
@@ -30,7 +30,7 @@
         </div>
         <div class="col"  style="margin-right: 25px;">
           <h4>Login</h4>
-          <form class="form-group" action="url_for(success)" method="post">
+          <form class="form-group" action="{{ url_for('success') }}" method="post">
             <label for="email" style="margin-top: 10px;">Email</label>
             <input type='text' class="form-control" name='email' placeholder="Email">
             <label for="pw" style="margin-top: 10px;">Password</label>
@@ -40,5 +40,14 @@
         </div>
       </div>
     </div>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <ul class=flashes>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
   </body>
 </html>
