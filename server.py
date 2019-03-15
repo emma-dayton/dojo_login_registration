@@ -10,9 +10,14 @@ email_regex = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 
 @app.route('/')
 def registration():
-    flash('Did This Work?', 'work')
-    flash('Not really', 'not_work')
-    session['title'] = 'Login or Register'
+    print(session)
+    keylist = []
+    for key in session.keys():
+        keylist.append(key)
+    for key in keylist:
+        session.pop(key)
+    print(session)
+    session['title']= 'Login or Register'
     return render_template('index.html')
 
 @app.route('/success', methods=['POST'])
@@ -53,8 +58,14 @@ def success():
         data = {'email': request.form['email']}
         query = 'SELECT pw_hash FROM users WHERE email=%(email)s'
         check = db.query_db(query, data)
-        bcrypt.check_password_hash(check[0]['pw_hash'], request.form['pw'])
-        session['header_message'] = 'You have successfully logged in!'
+        if bcrypt.check_password_hash(check[0]['pw_hash'], request.form['pw']):
+            db = connectToMySQL('login_registration')
+            query = "SELECT * FROM users WHERE email = %(email)s"
+            user = db.query_db(query, data)
+            session['user'] = user[0]
+            session['header_message'] = 'You have successfully logged in!'
+        else:
+            return redirect('/')
     if is_valid is False: # checks if validation failed for registration
         return redirect('/')
     if register: # checks if email in db, then runs insert into db for registration
@@ -70,8 +81,15 @@ def success():
                 %(pw)s, now(), now())"""
         db.query_db(query, data)
         session['header_message'] = 'You have successfully created an account!'
+        db = connectToMySQL('login_registration')
+        query = "SELECT * FROM users WHERE email = %(email)s"
+        user = db.query_db(query, data)
+        session['user'] = user[0]
     return render_template('success.html') #only renders on successful registration/login
 
+@app.route('/logout')
+def logout():
+    return redirect('index.html')
 
 if __name__ == "__main__":
     app.run(debug=True)
