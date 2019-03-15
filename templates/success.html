@@ -12,4 +12,4 @@
     		<a class="btn btn-outline-success my-2 my-sm-0" href="/">Home Please</a>
   		</nav>
       <h1>Thank you {{ session['user']['first_name'] }}! {{ session['header_message']}}</h1>
-      <a href="url_for('logout')">logout</a>
+      <a href="{{ url_for('logout') }}">logout</a>
